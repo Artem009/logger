@@ -70,4 +70,33 @@ export class ErrorsController {
   remove(@Param('id') id: string) {
     return this.errorsService.remove(id);
   }
+
+  /** ====================== WEBHOOK ====================== */
+  @Post('/webhook')
+  @ApiOperation({ summary: 'Webhook endpoint' })
+  @ApiResponse({ status: 200, description: 'Ok' })
+  async webhook(@Body() data: any) {
+    await this.errorsService.create({ data });
+    return { data: "It's working!" };
+  }
+
+  /** ====================== ADVICE ====================== */
+  @Post('/advice')
+  @ApiOperation({ summary: 'Get AI advice for an error' })
+  @ApiResponse({
+    status: 200,
+    description: 'AI analysis of the error',
+    schema: {
+      type: 'object',
+      properties: {
+        advice: { type: 'string' },
+      },
+    },
+  })
+  async advice() {
+    const errorInfo  = await this.errorsService.findAll();
+    const errorInfoString = errorInfo.map(error => error.data).join('\n');
+    const advice = await this.errorsService.advice(errorInfoString);
+    return { advice };
+  }
 }
