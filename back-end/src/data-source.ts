@@ -3,6 +3,8 @@ import { config } from 'dotenv';
 
 config();
 
+const isSSLRequired = process.env.DATABASE_SSLMODE === 'require';
+
 export const AppDataSource = new DataSource({
   type: 'postgres',
   host: process.env.DATABASE_HOST,
@@ -12,4 +14,5 @@ export const AppDataSource = new DataSource({
   database: process.env.DATABASE_NAME,
   entities: ['src/**/*.entity.ts'],
   migrations: ['src/migrations/*.ts'],
+  ssl: isSSLRequired ? { rejectUnauthorized: false } : false,
 });

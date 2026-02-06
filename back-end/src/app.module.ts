@@ -2,23 +2,32 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ErrorsModule } from './errors/errors.module';
 import { Error } from './errors/entities/error.entity';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DATABASE_HOST,
-      port: Number(process.env.DATABASE_PORT),
-      username: process.env.DATABASE_USER,
-      password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE_NAME,
-      entities: [Error],
-      synchronize: false,
-      migrations: ['dist/migrations/*.js'],
-      migrationsRun: false,
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const isSSLRequired =
+          configService.get<string>('DATABASE_SSLMODE') === 'require';
+        return {
+          type: 'postgres',
+          host: configService.get<string>('DATABASE_HOST'),
+          port: configService.get<number>('DATABASE_PORT'),
+          username: configService.get<string>('DATABASE_USER'),
+          password: configService.get<string>('DATABASE_PASSWORD'),
+          database: configService.get<string>('DATABASE_NAME'),
+          entities: [Error],
+          synchronize: false,
+          migrations: ['dist/migrations/*.js'],
+          migrationsRun: false,
+          ssl: isSSLRequired ? { rejectUnauthorized: false } : false,
+        };
+      },
     }),
     ErrorsModule,
   ],
