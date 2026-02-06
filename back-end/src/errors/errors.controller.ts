@@ -70,4 +70,13 @@ export class ErrorsController {
   remove(@Param('id') id: string) {
     return this.errorsService.remove(id);
   }
+
+  /** ====================== WEBHOOK ====================== */
+  @Post('/webhook')
+  @ApiOperation({ summary: 'Webhook endpoint' })
+  @ApiResponse({ status: 200, description: 'Ok' })
+  async webhook(@Body() data: any) {
+    await this.errorsService.create({ data });
+    return { data: "It's working!" };
+  }
 }
