@@ -11,6 +11,7 @@ import { ApiTags, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { ErrorsService } from './errors.service';
 import { CreateErrorDto } from './dto/create-error.dto';
 import { UpdateErrorDto } from './dto/update-error.dto';
+import { AdviceErrorDto } from './dto/advice-error.dto';
 import { Errors } from './entities/error.entity';
 
 @ApiTags('errors')
@@ -96,9 +97,17 @@ export class ErrorsController {
       },
     },
   })
-  async advice() {
-    const errorInfo  = await this.errorsService.findAll();
-    const errorInfoString = errorInfo.map(error => error.data).join('\n');
+  async advice(@Body() adviceErrorDto: AdviceErrorDto) {
+    let errorInfoString: string;
+
+    if (adviceErrorDto.errorId) {
+      const error = await this.errorsService.findOne(adviceErrorDto.errorId);
+      errorInfoString = JSON.stringify(error.data);
+    } else {
+      const errors = await this.errorsService.findLatest(10);
+      errorInfoString = errors.map(error => JSON.stringify(error.data)).join('\n');
+    }
+
     const advice = await this.errorsService.advice(errorInfoString);
     return { advice };
   }

@@ -32,6 +32,14 @@ export class ErrorsService {
     return this.errorsRepository.find({ relations: ['actors'] });
   }
 
+  findLatest(limit: number = 10) {
+    return this.errorsRepository.find({
+      relations: ['actors'],
+      order: { createdAt: 'DESC' },
+      take: limit,
+    });
+  }
+
   async findOne(id: string) {
     const error = await this.errorsRepository.findOne({ where: { id }, relations: ['actors'] });
     if (!error) {
