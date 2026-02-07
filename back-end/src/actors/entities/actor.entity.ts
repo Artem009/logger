@@ -5,7 +5,7 @@ import {
   Column,
   ManyToMany,
 } from 'typeorm';
-import { Error } from '../../errors/entities/error.entity';
+import { Errors } from '../../errors/entities/error.entity';
 
 @Entity('actors')
 export class Actor {
@@ -21,6 +21,6 @@ export class Actor {
   @Column({ type: 'varchar' })
   name: string;
 
-  @ManyToMany(() => Error, (error) => error.actors)
-  errors: Error[];
+  @ManyToMany(() => Errors, (error) => error.actors)
+  errors: Errors[];
 }

@@ -11,7 +11,7 @@ import {
 import { Actor } from '../../actors/entities/actor.entity';
 
 @Entity('errors')
-export class Error {
+export class Errors {
   @ApiProperty({ description: 'Unique identifier', example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
