@@ -1,0 +1,56 @@
+{
+  "action": "resolved",
+  "installation": { "uuid": "0d0bb716-b671-47a5-bead-29e7c6f601b2" },
+  "data": {
+    "resolution_type": "now",
+    "issue": {
+      "id": "94080315",
+      "shareId": null,
+      "shortId": "NODE-NESTJS-1",
+      "title": "TypeError: Object [object Object] has no method 'updateFrom'",
+      "culprit": "../../sentry/scripts/views.js in poll",
+      "permalink": "https://excalibur-q7.sentry.io/issues/94080315/",
+      "logger": null,
+      "level": "error",
+      "status": "resolved",
+      "statusDetails": {},
+      "substatus": null,
+      "isPublic": false,
+      "platform": "other",
+      "project": {
+        "id": "4510840508055632",
+        "name": "node-nestjs",
+        "slug": "node-nestjs",
+        "platform": "node-nestjs"
+      },
+      "type": "error",
+      "metadata": {
+        "value": "Object [object Object] has no method 'updateFrom'",
+        "type": "TypeError",
+        "filename": "../../sentry/scripts/views.js",
+        "function": "poll",
+        "in_app_frame_mix": "mixed",
+        "initial_priority": 75
+      },
+      "numComments": 0,
+      "assignedTo": null,
+      "isBookmarked": false,
+      "isSubscribed": false,
+      "subscriptionDetails": null,
+      "hasSeen": false,
+      "annotations": [],
+      "issueType": "error",
+      "issueCategory": "error",
+      "priority": "high",
+      "priorityLockedAt": null,
+      "seerFixabilityScore": null,
+      "seerAutofixLastTriggered": null,
+      "isUnhandled": false,
+      "count": "1",
+      "userCount": 1,
+      "firstSeen": "2026-02-06T18:51:03.581000Z",
+      "lastSeen": "2026-02-06T18:51:03.581000Z"
+    }
+  },
+  "actor": { "type": "user", "id": 4229726, "name": "Artem" }
+}

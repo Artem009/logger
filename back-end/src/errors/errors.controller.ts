@@ -75,8 +75,8 @@ export class ErrorsController {
   @Post('/webhook')
   @ApiOperation({ summary: 'Webhook endpoint' })
   @ApiResponse({ status: 200, description: 'Ok' })
-  async webhook(@Body() data: any) {
-    await this.errorsService.create({ data });
+  async webhook(@Body() body: any) {
+    await this.errorsService.handleWebhook(body);
     return { data: "It's working!" };
   }
 

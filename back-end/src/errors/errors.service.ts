@@ -6,6 +6,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { CreateErrorDto } from './dto/create-error.dto';
 import { UpdateErrorDto } from './dto/update-error.dto';
 import { Error } from './entities/error.entity';
+import { ActorsService } from '../actors/actors.service';
 
 @Injectable()
 export class ErrorsService {
@@ -15,6 +16,7 @@ export class ErrorsService {
     @InjectRepository(Error)
     private readonly errorsRepository: Repository<Error>,
     private readonly configService: ConfigService,
+    private readonly actorsService: ActorsService,
   ) {
     this.anthropic = new Anthropic({
       apiKey: this.configService.get<string>('ANTHROPIC_API_KEY'),
@@ -27,15 +29,19 @@ export class ErrorsService {
   }
 
   findAll() {
-    return this.errorsRepository.find();
+    return this.errorsRepository.find({ relations: ['actors'] });
   }
 
   async findOne(id: string) {
-    const error = await this.errorsRepository.findOneBy({ id });
+    const error = await this.errorsRepository.findOne({ where: { id }, relations: ['actors'] });
     if (!error) {
       throw new NotFoundException(`Error with id ${id} not found`);
     }
     return error;
+  }
+
+  async findOneByContent(data: string) {
+    return await this.errorsRepository.findOneBy({ data });
   }
 
   async update(id: string, updateErrorDto: UpdateErrorDto) {
@@ -47,6 +53,30 @@ export class ErrorsService {
   async remove(id: string) {
     const error = await this.findOne(id);
     return this.errorsRepository.remove(error);
+  }
+
+  async handleWebhook(body: any) {
+    const issueTitle = body.data?.issue?.title;
+    const actorData = body.actor;
+
+    const existingError = await this.findOneByContent(issueTitle);
+
+    if (existingError) {
+      existingError.counter += 1;
+      await this.errorsRepository.save(existingError);
+      return;
+    }
+
+    const actor = await this.actorsService.findOrCreate(
+      actorData.name,
+      actorData.type,
+    );
+
+    const adviceText = await this.advice(issueTitle);
+
+    const error = this.errorsRepository.create({ data: issueTitle, advice: adviceText });
+    error.actors = [actor];
+    await this.errorsRepository.save(error);
   }
 
   async advice(errorInfo: string): Promise<string> {
