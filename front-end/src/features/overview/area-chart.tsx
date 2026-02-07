@@ -1,71 +1,89 @@
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-
-export const description = "A stacked area chart";
-
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-];
+import type { ErrorEntry } from "@/types/error";
+import { useMemo } from "react";
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  errors: {
+    label: "Errors",
     color: "var(--chart-1)",
   },
-  mobile: {
-    label: "Mobile",
+  occurrences: {
+    label: "Occurrences",
     color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
 
-export function AreaChartStacked() {
+interface ErrorsAreaChartProps {
+  errors: ErrorEntry[];
+}
+
+export function ErrorsAreaChart({ errors }: ErrorsAreaChartProps) {
+  const chartData = useMemo(() => {
+    const grouped = new Map<string, { errors: number; occurrences: number }>();
+
+    for (const error of errors) {
+      const date = new Date(error.createdAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+      const existing = grouped.get(date) || { errors: 0, occurrences: 0 };
+      existing.errors += 1;
+      existing.occurrences += error.counter;
+      grouped.set(date, existing);
+    }
+
+    return Array.from(grouped.entries())
+      .map(([date, data]) => ({ date, ...data }))
+      .slice(-14); // Last 14 days max
+  }, [errors]);
+
+  if (chartData.length === 0) {
+    return (
+      <div className="flex h-[300px] items-center justify-center text-muted-foreground">
+        No error data to display
+      </div>
+    );
+  }
+
   return (
     <ChartContainer config={chartConfig} className="h-[300px] w-full">
       <AreaChart
         accessibilityLayer
         data={chartData}
-        margin={{
-          left: 12,
-          right: 12,
-        }}
+        margin={{ left: 12, right: 12 }}
       >
         <CartesianGrid vertical={false} />
         <XAxis
-          dataKey="month"
+          dataKey="date"
           tickLine={false}
           axisLine={false}
           tickMargin={8}
-          tickFormatter={(value) => value.slice(0, 3)}
         />
+        <YAxis tickLine={false} axisLine={false} tickMargin={8} />
         <ChartTooltip
           cursor={false}
           content={<ChartTooltipContent indicator="dot" />}
         />
         <Area
-          dataKey="mobile"
+          dataKey="occurrences"
           type="natural"
-          fill="var(--color-mobile)"
+          fill="var(--color-occurrences)"
           fillOpacity={0.4}
-          stroke="var(--color-mobile)"
+          stroke="var(--color-occurrences)"
           stackId="a"
         />
         <Area
-          dataKey="desktop"
+          dataKey="errors"
           type="natural"
-          fill="var(--color-desktop)"
+          fill="var(--color-errors)"
           fillOpacity={0.4}
-          stroke="var(--color-desktop)"
+          stroke="var(--color-errors)"
           stackId="a"
         />
       </AreaChart>

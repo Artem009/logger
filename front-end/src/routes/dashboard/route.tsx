@@ -8,19 +8,16 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { UserNav } from "@/components/user-nav";
-import { getUser } from "@/data/users";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardLayout,
-  loader: async () => await getUser(),
 });
 
 export function DashboardLayout() {
-  const user = Route.useLoaderData();
   return (
     <SidebarProvider>
-      <AppSidebar user={user} />
+      <AppSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 justify-between">
           <div className="flex items-center gap-2 px-4">
@@ -33,7 +30,7 @@ export function DashboardLayout() {
           </div>
           <div className="flex items-center gap-3">
             <ModeToggle />
-            <UserNav user={user} />
+            <UserNav />
           </div>
         </header>
 
