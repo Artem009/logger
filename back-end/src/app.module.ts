@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ErrorsModule } from './errors/errors.module';
 import { Error } from './errors/entities/error.entity';
+import { ActorsModule } from './actors/actors.module';
+import { Actor } from './actors/entities/actor.entity';
 
 @Module({
   imports: [
@@ -21,7 +23,7 @@ import { Error } from './errors/entities/error.entity';
           username: configService.get<string>('DATABASE_USER'),
           password: configService.get<string>('DATABASE_PASSWORD'),
           database: configService.get<string>('DATABASE_NAME'),
-          entities: [Error],
+          entities: [Error, Actor],
           synchronize: false,
           migrations: ['dist/migrations/*.js'],
           migrationsRun: false,
@@ -30,6 +32,7 @@ import { Error } from './errors/entities/error.entity';
       },
     }),
     ErrorsModule,
+    ActorsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
