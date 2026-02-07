@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "vinxi dev",
     "build": "vinxi build",
-    "start": "vinxi start"
+    "start": "PORT=3001 vinxi start"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
