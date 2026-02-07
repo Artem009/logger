@@ -38,9 +38,6 @@ export class ErrorsController {
     type: [Errors],
   })
   findAll() {
-    let a = Date.UTC(2026, 1, 8);
-    let b = Date.now();
-    if (a !== b) throw new Error("My first Sentry error!");
     return this.errorsService.findAll();
   }
 
