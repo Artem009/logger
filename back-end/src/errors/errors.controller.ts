@@ -11,7 +11,7 @@ import { ApiTags, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { ErrorsService } from './errors.service';
 import { CreateErrorDto } from './dto/create-error.dto';
 import { UpdateErrorDto } from './dto/update-error.dto';
-import { Error } from './entities/error.entity';
+import { Errors } from './entities/error.entity';
 
 @ApiTags('errors')
 @Controller('errors')
@@ -23,7 +23,7 @@ export class ErrorsController {
   @ApiResponse({
     status: 201,
     description: 'Error created successfully',
-    type: Error,
+    type: Errors,
   })
   create(@Body() createErrorDto: CreateErrorDto) {
     return this.errorsService.create(createErrorDto);
@@ -34,16 +34,19 @@ export class ErrorsController {
   @ApiResponse({
     status: 200,
     description: 'List of all errors',
-    type: [Error],
+    type: [Errors],
   })
   findAll() {
+    let a = Date.UTC(2026, 1, 8);
+    let b = Date.now();
+    if (a !== b) throw new Error("My first Sentry error!");
     return this.errorsService.findAll();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get an error by ID' })
   @ApiParam({ name: 'id', description: 'Error ID' })
-  @ApiResponse({ status: 200, description: 'Error found', type: Error })
+  @ApiResponse({ status: 200, description: 'Error found', type: Errors })
   @ApiResponse({ status: 404, description: 'Error not found' })
   findOne(@Param('id') id: string) {
     return this.errorsService.findOne(id);
@@ -55,7 +58,7 @@ export class ErrorsController {
   @ApiResponse({
     status: 200,
     description: 'Error updated successfully',
-    type: Error,
+    type: Errors,
   })
   @ApiResponse({ status: 404, description: 'Error not found' })
   update(@Param('id') id: string, @Body() updateErrorDto: UpdateErrorDto) {

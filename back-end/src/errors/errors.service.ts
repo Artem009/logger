@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import Anthropic from '@anthropic-ai/sdk';
 import { CreateErrorDto } from './dto/create-error.dto';
 import { UpdateErrorDto } from './dto/update-error.dto';
-import { Error } from './entities/error.entity';
+import { Errors } from './entities/error.entity';
 import { ActorsService } from '../actors/actors.service';
 
 @Injectable()
@@ -13,8 +13,8 @@ export class ErrorsService {
   private anthropic: Anthropic;
 
   constructor(
-    @InjectRepository(Error)
-    private readonly errorsRepository: Repository<Error>,
+    @InjectRepository(Errors)
+    private readonly errorsRepository: Repository<Errors>,
     private readonly configService: ConfigService,
     private readonly actorsService: ActorsService,
   ) {
@@ -74,7 +74,7 @@ export class ErrorsService {
 
     const adviceText = await this.advice(issueTitle);
 
-    const error = this.errorsRepository.create({ data: issueTitle, advice: adviceText });
+    const error = this.errorsRepository.create({ data: body, advice: adviceText });
     error.actors = [actor];
     await this.errorsRepository.save(error);
   }
