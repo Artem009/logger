@@ -71,7 +71,7 @@ export class ErrorsService {
 
     if (existingError) {
       const isExistingErrorToday = existingError?.createdAt?.getDate() === new Date().getDate();
-      if (!isExistingErrorToday) {
+      if (isExistingErrorToday) {
         existingError.counter += 1;
         await this.errorsRepository.save(existingError);
         return;
