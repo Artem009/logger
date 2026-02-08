@@ -70,9 +70,12 @@ export class ErrorsService {
     const existingError = await this.findOneByContent(issueTitle);
 
     if (existingError) {
-      existingError.counter += 1;
-      await this.errorsRepository.save(existingError);
-      return;
+      const isExistingErrorToday = existingError?.createdAt?.getDate() === new Date().getDate();
+      if (!isExistingErrorToday) {
+        existingError.counter += 1;
+        await this.errorsRepository.save(existingError);
+        return;
+      }
     }
 
     const actor = await this.actorsService.findOrCreate(
