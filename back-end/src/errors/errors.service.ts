@@ -29,7 +29,7 @@ export class ErrorsService {
   }
 
   findAll() {
-    return this.errorsRepository.find({ relations: ['actors'] });
+    return this.errorsRepository.find({ relations: ['actors'], order: { createdAt: 'DESC'} });
   }
 
   findLatest(limit: number = 10) {
